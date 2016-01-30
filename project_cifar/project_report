@@ -1,6 +1,13 @@
 The task required making a classifier that will achieve less than 25 percent errors on CIFAR10 dataset.
 
-The proposed solution is based on convolutional neural networks. This approach tends to be successfull when it comes to image classification, becouse we can use convolutional layers to extract features that will tell us more about a picture than just single pixels. The way it works resides in a very nature of a convolution operation, as each point of a convolved image contains information about a neighbourhoor of a coresponding point in the base picture. This fact is very useful, becouse before that the network had no information about the location of each of the input points. Now it knows which ones are positioned next to each other, which can hopefully help it to treat the input more like an image and less like just a set of numbers.
+The proposed solution is based on convolutional neural networks. This approach tends to be successfull 
+when it comes to image classification, becouse we can use convolutional layers to extract features that 
+will tell us more about a picture than just single pixels. The way it works resides in a very nature of 
+a convolution operation, as each point of a convolved image contains information about a neighbourhoor 
+of a coresponding point in the base picture. This fact is very useful, becouse before that the network 
+had no information about the location of each of the input points. Now it knows which ones are positioned 
+next to each other, which can hopefully help it to treat the input more like an image and less like just 
+a set of numbers.
 
 I used the starter code from the lecture about convolutions.
 
@@ -20,22 +27,35 @@ The architecture of the network is as follows:
 
 The learning procedure uses Stochastic Gradient Decent with standard improvements:
 
- - momentum (We distribute each update of the network's parameters among several learning steps, which helps in faster converging);
+ - momentum (We distribute each update of the network's parameters among several learning steps, 
+ which helps in faster converging);
  
- - weight decay (We penalize huge weights by adding the norm of parameters to the cost function, so that the network can hopefully find the most important parameters, as most of the weights at the end of learning process should be close to 0);
+ - weight decay (We penalize huge weights by adding the norm of parameters to the cost function, 
+ so that the network can hopefully find the most important parameters, as most of the weights 
+ at the end of learning process should be close to 0);
 
- - learning rate scheduling (The longer the learning process goes the lower the learning rate is, which helps in more fine-grained searching for the local minimum during the later parts of learning process).
+ - learning rate scheduling (The longer the learning process goes the lower the learning rate is, 
+ which helps in more fine-grained searching for the local minimum during the later parts of 
+ the learning process).
 
 
 The above approach yielded about 75,2 percent accuracy on the CIFAR10 test set.
 
 
 
-After that I tried to improve the result. My thought was to add dropout. We want to randomly disable some neurons (usually about 50 percent of them) during each training step (and reenable them afterwards). That will allow us to basically train a large amount of models at the same time and average them out into a final solution.
+After that I tried to improve the result. My thought was to add dropout. We want to randomly disable 
+some neurons (usually about 50 percent of them) during each training step (and reenable them afterwards). 
+That will allow us to basically train a large amount of models at the same time and average them out 
+into a final solution.
 
-When I added 50 percent dropout in the first affine layer, the accuracy raised by about 2,5 percentage points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. I also tried to randomly drop some parts of the input, or add a gaussian noise to it (all that to prevent the net from overfitting), but unfortunatelly that didn't improve anything either.
+When I added 50 percent dropout in the first affine layer, the accuracy raised by about 2,5 percentage 
+points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't 
+do any good. I also tried to randomly drop some parts of the input, or add a gaussian noise to it 
+(all that to prevent the net from overfitting), but unfortunatelly that didn't improve anything either.
 
-Using dropout usually means that the network will take much longer to train, becouse the weight updates are more chaotic (as we train different subset of neurons each time). In our case the number of epochs necessary for the net to learn was nearly trippled after applying a dropout in the first affine layer.
+Using dropout usually means that the network will take much longer to train, becouse the weight updates 
+are more chaotic (as we train different subset of neurons each time). In our case the number of epochs 
+necessary for the net to learn was nearly trippled after applying a dropout in the first affine layer.
 
 Total training time: 2882 seconds (148 epochs)
 Best result achieved after 98 epochs.
