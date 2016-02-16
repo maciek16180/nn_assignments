@@ -1,62 +1,87 @@
-The task required making a classifier that will achieve less than 25 percent errors on CIFAR10 dataset.
+CIFAR10 classification task
+Maciej Pawlikowski
 
-The proposed solution is based on convolutional neural networks. This approach tends to be successfull 
-when it comes to image classification, becouse we can use convolutional layers to extract features that 
-will tell us more about a picture than just single pixels. The way it works resides in a very nature of 
-a convolution operation, as each point of a convolved image contains information about a neighbourhoor 
-of a coresponding point in the base picture. This fact is very useful, becouse before that the network 
-had no information about the location of each of the input points. Now it knows which ones are positioned 
-next to each other, which can hopefully help it to treat the input more like an image and less like just 
-a set of numbers.
+Motivation
+
+The task required making a classifier that will achieve less than 25 percent errors on the CIFAR10 dataset. 
+The  dataset consists of 60000 32x32 color images in 10 classes, with 6000 images per class. There are 50000 
+training images and 10000 test images. 
+
+The proposed solution is based on convolutional neural networks. This approach tends to be successful when it 
+comes to image classification, because we can use convolutional layers to extract features that will tell us 
+more about a picture than just single pixels. The way it works resides in a very nature of a convolution 
+operation, as each point of a convolved image contains information about a neighborhood of a corresponding 
+point in the base picture. This fact is very useful, because before that the network had no information about 
+the location of each of the input points. Now it knows which ones are positioned next to each other, which can 
+hopefully help it to treat the input more like an image and less like just a set of numbers.
+
+
+The network 
 
 I used the starter code from the lecture about convolutions.
-
-
 The architecture of the network is as follows:
 
- - convolutional layer with 40 3x3 fliters followed by 3x3 max pooling and ReLU activation
-   (at this point each 32x32 input image is tranformed into 40 10x10 images); 
+ 1.	Convolutional layer with 40 3x3 filters followed by 3x3 max pooling and ReLU activation 
+ (at this point each 32x32 input image is transformed into 40 10x10 feature maps); 
+ 
+ 2.	Convolutional layer with 50 3x3 filters followed by 2x2 max pooling and ReLU activation 
+ (now we have 40*50 4x4 feature maps out of each input image);
+ 
+ 3.	Fully-connected layer with 500 neurons activated by ReLU;
+ 
+ 4.	Fully-connected layer with 10 neurons followed by Softmax.
+ 
+In the original code from the lecture filters in the first two layers were 5x5. Since I didn't know why they 
+were chosen to be 5x5, I tried to experiment with their sizes. I thought they can't be too big, because the 
+input images are only 32x32, which means that a big filter could lead to losing some details by adding together 
+pixels that are too far apart in the original image. Because the images were small, I decided to try out smaller 
+filters in a hope for better recognition of the contents of the pictures. 3x3 filters gave slightly better 
+accuracy than 5x5, so I stuck with them.
 
- - convolutional layer with 50 3x3 fliters followed by 2x2 max pooling and ReLU activation
-   (now we have 40*50 4x4 images out of each input image);
-
- - affine layer with 500 neurons activated by ReLU;
-
- - affine layer with 10 neurons followed by Softmax.
-
+I also increased the sizes of the convolutional layers. I didn't get significantly better results by making them 
+larger than about 50 filters each. Increasing them to 40-50 range caused accuracy to grow by about 2 percentage 
+points though. The training time is obviously rising with each increase, so I used the sizes listed above.
 
 The learning procedure uses Stochastic Gradient Decent with standard improvements:
 
- - momentum (We distribute each update of the network's parameters among several learning steps, 
- which helps in faster converging);
+ •	momentum (We distribute each update of the network's parameters among several learning steps, which helps in 
+   faster converging); 
  
- - weight decay (We penalize huge weights by adding the norm of parameters to the cost function, 
- so that the network can hopefully find the most important parameters, as most of the weights 
- at the end of learning process should be close to 0);
+ •	weight decay (We penalize huge weights by adding the norm of parameters to the cost function, so that the 
+   network can hopefully find the most important parameters, as most of the weights at the end of learning process 
+   should be close to 0); 
+ 
+ •	learning rate scheduling (The longer the learning process goes the lower the learning rate is, which helps in 
+   more fine-grained searching for the local minimum during the later parts of learning process).
 
- - learning rate scheduling (The longer the learning process goes the lower the learning rate is, 
- which helps in more fine-grained searching for the local minimum during the later parts of 
- the learning process).
-
+I didn’t change the momentum value or the weight decay parameter, after experimenting with them my results only 
+got worse. Adjusting learning rate proven very helpful though. I got better accuracy by almost tripling the initial 
+value and making it progressively decay after 5000 samples.
 
 The above approach yielded about 75,2 percent accuracy on the CIFAR10 test set.
 
 
+Problems
+The network suffered from enormous amount of overfitting. During the later stages of training process the accuracy 
+on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to properly 
+regularize the network. I made some attempts to regularize it further.
 
-After that I tried to improve the result. My thought was to add dropout. We want to randomly disable 
-some neurons (usually about 50 percent of them) during each training step (and reenable them afterwards). 
-That will allow us to basically train a large amount of models at the same time and average them out 
-into a final solution.
+My thought was to add dropout. We want to randomly disable some neurons (usually about 50 percent of them) during 
+each training step (and enable them again afterwards). That will allow us to basically train a large amount of models 
+at the same time and average them out into a final solution. Dropout is a very popular and easy to implement trick 
+for preventing network overfitting. It is also computationally efficient; in fact, we have to work less, because half 
+of the neurons are turned off.
 
-When I added 50 percent dropout in the first affine layer, the accuracy raised by about 2,5 percentage 
-points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't 
-do any good. I also tried to randomly drop some parts of the input, or add a gaussian noise to it 
-(all that to prevent the net from overfitting), but unfortunatelly that didn't improve anything either.
+When I added 50 percent dropout after the first affine layer, the accuracy raised by about 2,5 percentage points. 
+I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
 
-Using dropout usually means that the network will take much longer to train, becouse the weight updates 
-are more chaotic (as we train different subset of neurons each time). In our case the number of epochs 
-necessary for the net to learn was nearly trippled after applying a dropout in the first affine layer.
+Using dropout usually means that the network will take much longer to train, as the weight updates are more chaotic 
+(we train different subset of neurons each time). In our case the number of epochs  necessary for the net to learn 
+nearly tripled after applying a dropout after the first affine layer.
 
-Total training time: 2882 seconds (148 epochs)
-Best result achieved after 98 epochs.
-Test set accuracy: 77,91 percent
+  Total training time: 2882 seconds (148 epochs)
+  Best result achieved after 98 epochs.
+  Test set accuracy: 77,91 percent
+
+While increasing accuracy on the test set, dropout didn't quite solve the overfitting problem. The train set error was 
+still below 1 percent.
