@@ -72,16 +72,19 @@ The network suffered from enormous amount of overfitting. During the later stage
 on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to properly 
 regularize the network. I made some attempts to regularize it further.
 
-My first thought was to add dropout. Dropout is a very popular and easy to implement trick for preventing network overfitting. We want to randomly disable some neurons (usually about 50 percent of them) during 
-each training step (and enable them again afterwards). That will allow us to basically train a large amount of models 
-at the same time and average them out into a final solution. It is computationally efficient; in fact, we have to work less, because half 
-of the neurons are turned off.
+My first thought was to add dropout. Dropout is a very popular and easy to implement trick for preventing network 
+overfitting. We want to randomly disable some neurons (usually about 50 percent of them) during each training step 
+(and enable them again afterwards). That will allow us to basically train a large amount of models at the same time 
+and average them out into a final solution. It is computationally efficient; in fact, we have to work less, because 
+half of the neurons are turned off.
 
-When I added 50 percent dropout after the first fully-connected layer, the accuracy raised by about 2 percentage points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
+When I added 50 percent dropout after the first fully-connected layer, the accuracy raised by about 2 percentage 
+points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
 
 Using dropout usually means that the network will take much longer to train, as the weight updates are more chaotic 
 (we train different subset of neurons each time). In our case the number of epochs  necessary for the net to learn 
-increased significantly. It is worth noting that the lengths of training sessions started to vary greatly after applying dropout after the first fully-connected layer. Results of the first two training sessions I've done:
+increased significantly. It is worth noting that the lengths of training sessions started to vary greatly after 
+applying dropout after the first fully-connected layer. Results of the first two training sessions I've done:
 
   Total training time: 969 seconds (73 epochs)
   Best result achieved after 48 epochs.
@@ -97,13 +100,15 @@ increased significantly. It is worth noting that the lengths of training session
 While increasing accuracy on the test set, dropout didn't quite solve the overfitting problem. The train set error was 
 still very small.
 
-Popular way of decreasing overfitting is to just get more data. More data means that more complex model is necessary to remember all of it. In case of pictures we can easily create artificial data by rotating of shifting existing images: neither rotate nor shift changes what is in the picture, so the labels will stay the way they are.
+Simple way of decreasing overfitting is to just get more data. More data means that more complex model is necessary 
+to remember all of it. In case of pictures we can easily create artificial data by rotating or shifting existing images. 
+Neither rotate nor shift changes what object is in the picture, so the labels will stay the way they are.
 
-I tried to get less overfit by doubling the training data: every picture in the data has been duplicated and then shifted by a small random number of pixels on both axis. This resulted in an increase of both accuracy and training time.
+I tried to get less overfit by doubling the training data. Every picture in the data has been duplicated and then shifted 
+by a small random number of pixels on both axis. So half of the new data consists of the original dataset and the other
+half is generated. This resulted in an increase of both accuracy and training time.
 
   Total training time: 5034 seconds (manually stopped after 205 epochs)
   Best result achieved after 205 epochs.
   Test set accuracy: 80,59 percent
   Train set accuracy: 95,61 percent
-
-
