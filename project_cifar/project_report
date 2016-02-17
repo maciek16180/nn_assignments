@@ -58,30 +58,52 @@ I didn’t change the momentum value or the weight decay parameter, after experi
 got worse. Adjusting learning rate proven very helpful though. I got better accuracy by almost tripling the initial 
 value and making it progressively decay after 5000 samples.
 
-The above approach yielded about 75,2 percent accuracy on the CIFAR10 test set.
+The above approach yielded slightly more than 75 percent accuracy on the CIFAR10 test set.
+
+  Total training time: 555 seconds (42 epochs)
+  Best result achieved after epoch 27.
+  Test set accuracy: 75,64 percent
+  Train set accuracy: 99,8 percent
 
 
 Problems
+
 The network suffered from enormous amount of overfitting. During the later stages of training process the accuracy 
 on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to properly 
 regularize the network. I made some attempts to regularize it further.
 
-My thought was to add dropout. We want to randomly disable some neurons (usually about 50 percent of them) during 
+My first thought was to add dropout. Dropout is a very popular and easy to implement trick for preventing network overfitting. We want to randomly disable some neurons (usually about 50 percent of them) during 
 each training step (and enable them again afterwards). That will allow us to basically train a large amount of models 
-at the same time and average them out into a final solution. Dropout is a very popular and easy to implement trick 
-for preventing network overfitting. It is also computationally efficient; in fact, we have to work less, because half 
+at the same time and average them out into a final solution. It is computationally efficient; in fact, we have to work less, because half 
 of the neurons are turned off.
 
-When I added 50 percent dropout after the first affine layer, the accuracy raised by about 2,5 percentage points. 
-I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
+When I added 50 percent dropout after the first fully-connected layer, the accuracy raised by about 2 percentage points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
 
 Using dropout usually means that the network will take much longer to train, as the weight updates are more chaotic 
 (we train different subset of neurons each time). In our case the number of epochs  necessary for the net to learn 
-nearly tripled after applying a dropout after the first affine layer.
+increased significantly. It is worth noting that the lengths of training sessions started to vary greatly after applying dropout after the first fully-connected layer. Results of the first two training sessions I've done:
+
+  Total training time: 969 seconds (73 epochs)
+  Best result achieved after 48 epochs.
+  Test set accuracy: 77,31 percent
+  Train set accuracy: 97,04 percent
 
   Total training time: 2882 seconds (148 epochs)
   Best result achieved after 98 epochs.
   Test set accuracy: 77,91 percent
+  Train set accuracy: 99,16 percent
+  
 
 While increasing accuracy on the test set, dropout didn't quite solve the overfitting problem. The train set error was 
-still below 1 percent.
+still very small.
+
+Popular way of decreasing overfitting is to just get more data. More data means that more complex model is necessary to remember all of it. In case of pictures we can easily create artificial data by rotating of shifting existing images: neither rotate nor shift changes what is in the picture, so the labels will stay the way they are.
+
+I tried to get less overfit by doubling the training data: every picture in the data has been duplicated and then shifted by a small random number of pixels on both axis. This resulted in an increase of both accuracy and training time.
+
+  Total training time: 5034 seconds (manually stopped after 205 epochs)
+  Best result achieved after 205 epochs.
+  Test set accuracy: 80,59 percent
+  Train set accuracy: 95,61 percent
+
+
