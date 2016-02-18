@@ -4,7 +4,7 @@ Maciej Pawlikowski
 
 Motivation
 
-The task required making a classifier that will achieve less than 25 percent errors on the CIFAR10 dataset. 
+The task required making a classifier that will achieve less than 25% errors on the CIFAR10 dataset. 
 The  dataset consists of 60000 32x32 color images in 10 classes, with 6000 images per class. There are 50000 
 training images and 10000 test images. 
 
@@ -59,17 +59,17 @@ I didn’t change the momentum value or the weight decay parameter, after experi
 got worse. Adjusting learning rate proven very helpful though. I got better accuracy by almost tripling the initial 
 value and making it progressively decay after 5000 samples.
 
-The above approach yielded slightly more than 75 percent accuracy on the CIFAR10 test set. Given the fact that the 
+The above approach yielded slightly more than 75% accuracy on the CIFAR10 test set. Given the fact that the 
 network is still relatively small and very few changes were made compared to the starter code, I think this is 
 a nice result.
 
   Total training time: 555 seconds (42 epochs)
   Best result achieved after epoch 27.
-  Test set accuracy: 75,64 percent
-  Train set accuracy: 99,8 percent
+  Test set accuracy: 75,64%
+  Train set accuracy: 99,8%
 
 However, the network suffered from enormous amount of overfitting. During the later stages of training process the 
-accuracy on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to 
+accuracy on the train set was nearly 100%. Apparently, simple weight decay technique was not sufficient to 
 properly regularize the network. I made some attempts to regularize it further.
 
 
@@ -78,28 +78,28 @@ Improvements
 1. Dropout
 
 My first thought was to add dropout. Dropout is a very popular and easy to implement trick for preventing network 
-overfitting. We want to randomly disable some neurons (usually about 50 percent of them) during each training step 
+overfitting. We want to randomly disable some neurons (usually about 50% of them) during each training step 
 (and enable them again afterwards). That will allow us to basically train a large amount of models at the same time 
 and average them out into a final solution. It is computationally efficient; in fact, we have to work less, because 
 half of the neurons are turned off.
 
-When I added 50 percent dropout after the first fully-connected layer, the accuracy raised by about 2 percentage 
+When I added 50% dropout after the first fully-connected layer, the accuracy raised by about 2 percentage 
 points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
 
 Using dropout usually means that the network will take much longer to train, as the weight updates are more chaotic 
 (we train different subset of neurons each time). In our case the number of epochs  necessary for the net to learn 
 increased significantly. It is worth noting that the lengths of training sessions started to vary greatly after 
-applying dropout after the first fully-connected layer. Results of the first two training sessions I've done:
+applying dropout after the first fully-connected layer. Results of the two training sessions I've done:
 
   Total training time: 969 seconds (73 epochs)
-  Best result achieved after 48 epochs.
-  Test set accuracy: 77,31 percent
-  Train set accuracy: 97,04 percent
+  Best result achieved after epoch 48.
+  Test set accuracy: 77,31%
+  Train set accuracy: 97,04%
 
   Total training time: 2882 seconds (148 epochs)
-  Best result achieved after 98 epochs.
-  Test set accuracy: 77,91 percent
-  Train set accuracy: 99,16 percent
+  Best result achieved after epoch 98.
+  Test set accuracy: 77,91%
+  Train set accuracy: 99,16%
 
 While increasing accuracy on the test set, dropout didn't quite solve the overfitting problem. The train set error was 
 still very small.
@@ -115,6 +115,15 @@ by a small random number of pixels on both axis. So half of the new data consist
 half is generated. This resulted in an increase of both accuracy and training time.
 
   Total training time: 5034 seconds (manually stopped after 205 epochs)
-  Best result achieved after 205 epochs.
-  Test set accuracy: 80,59 percent
-  Train set accuracy: 95,61 percent
+  Best result achieved after epoch 205.
+  Test set accuracy: 80,59%
+  Train set accuracy: 95,61%
+
+I also tried a different transformation of data. This time the second half of data was created by flipping images horizontally. This approach gave very similar results, so I decided to merge it with the previous one. To cut on the training time, I took the original dataset and flipped 30% of images chosen randomly. Then I shifted another random 30% of the original data (like in the previous attempt). So now we have the new dataset, 40% of which is original data, and 60% consists of transformed images. Unfortulately I wasn't able to compare training time to the ones above, because I couldn't find a free lab computer. Each epoch should be shorter though, as the training set is now of the original size instead of being doubled. Results:
+
+  Total training time: manually stopped after 200 epochs
+  Best result achieved after epoch 168.
+  Test set accuracy: 81,17%
+  Train set accuracy: 91,75%
+
+It turns out we don't really need more data. Just adding some noise to the part of the dataset made the network generalize much better. The overfitting is not so extreme anymore (although it certainly can be decreased even further).
