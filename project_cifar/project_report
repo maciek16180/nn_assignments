@@ -59,9 +59,8 @@ I didn’t change the momentum value or the weight decay parameter, after experi
 got worse. Adjusting learning rate proven very helpful though. I got better accuracy by almost tripling the initial 
 value and making it progressively decay after 5000 samples.
 
-The above approach yielded slightly more than 75% accuracy on the CIFAR10 test set. Given the fact that the 
-network is still relatively small and very few changes were made compared to the starter code, I think this is 
-a nice result.
+The above approach yielded slightly more than 75% accuracy on the CIFAR10 test set. Given the fact that the network 
+is still relatively small and very few changes were made compared to the starter code, I think this is a nice result.
 
   Total training time: 555 seconds (42 epochs)
   Best result achieved after epoch 27.
@@ -69,8 +68,8 @@ a nice result.
   Train set accuracy: 99,8%
 
 However, the network suffered from enormous amount of overfitting. During the later stages of training process the 
-accuracy on the train set was nearly 100%. Apparently, simple weight decay technique was not sufficient to 
-properly regularize the network. I made some attempts to regularize it further.
+accuracy on the train set was nearly 100%. Apparently, simple weight decay technique was not sufficient to properly 
+regularize the network. I made some attempts to regularize it further.
 
 
 Improvements
@@ -83,8 +82,8 @@ overfitting. We want to randomly disable some neurons (usually about 50% of them
 and average them out into a final solution. It is computationally efficient; in fact, we have to work less, because 
 half of the neurons are turned off.
 
-When I added 50% dropout after the first fully-connected layer, the accuracy raised by about 2 percentage 
-points. I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
+When I added 50% dropout after the first fully-connected layer, the accuracy raised by about 2 percentage points. 
+I also experimented a bit with dropping neurons in other (convolutional) layers, but it didn't do any good. 
 
 Using dropout usually means that the network will take much longer to train, as the weight updates are more chaotic 
 (we train different subset of neurons each time). In our case the number of epochs  necessary for the net to learn 
@@ -119,11 +118,24 @@ half is generated. This resulted in an increase of both accuracy and training ti
   Test set accuracy: 80,59%
   Train set accuracy: 95,61%
 
-I also tried a different transformation of data. This time the second half of data was created by flipping images horizontally. This approach gave very similar results, so I decided to merge it with the previous one. To cut on the training time, I took the original dataset and flipped 30% of images chosen randomly. Then I shifted another random 30% of the original data (like in the previous attempt). So now we have the new dataset, 40% of which is original data, and 60% consists of transformed images. Unfortulately I wasn't able to compare training time to the ones above, because I couldn't find a free lab computer. Each epoch should be shorter though, as the training set is now of the original size instead of being doubled. Results:
+I also tried a different transformation of data. This time the second half of data was created by flipping images 
+horizontally. This approach gave very similar results, so I decided to merge it with the previous one. To cut on the 
+training time, I took the original dataset and flipped 30% of images chosen randomly. Then I shifted another random 30% 
+of the original data (like in the previous attempt). So now we have the new dataset, 40% of which is original data and 
+60% consists of transformed images. Unfortulately I wasn't able to compare training time to the ones above, because 
+I couldn't find a free lab computer. Each epoch should be shorter though, as the training set is now of the original size 
+instead of being doubled. Results:
 
   Total training time: manually stopped after 200 epochs
   Best result achieved after epoch 168.
   Test set accuracy: 81,17%
   Train set accuracy: 91,75%
 
-It turns out we don't really need more data. Just adding some noise to the part of the dataset made the network generalize much better. The overfitting is not so extreme anymore (although it certainly can be decreased even further).
+
+Conclusions
+
+Regularization plays a very important role in the neural network training. In our case we see that to make the network 
+generalize better we didn't really need more training examles. Just adding some noise to the part of the dataset caused much 
+better accuracy and a major decrease of overfitting. The disparity between the evectiveness of the network on the training 
+and testing data is not so extreme anymore (although it certainly can be decreased even further). Very nice improvement to 
+the network would be the shortening of training time, something that the current method clearly has trouble with. 
