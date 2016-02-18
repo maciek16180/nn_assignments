@@ -2,6 +2,7 @@ CIFAR10 classification task
 for the Neural Networks course, winter 2015
 Maciej Pawlikowski
 
+
 Motivation
 
 The task required making a classifier that will achieve less than 25% errors on the CIFAR10 dataset. 
