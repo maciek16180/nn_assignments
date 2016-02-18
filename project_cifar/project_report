@@ -123,7 +123,7 @@ I also tried a different transformation of data. This time the second half of da
 horizontally. This approach gave very similar results, so I decided to merge it with the previous one. To cut on the 
 training time, I took the original dataset and flipped 30% of images chosen randomly. Then I shifted another random 30% 
 of the original data (like in the previous attempt). So now we have the new dataset, 40% of which is original data and 
-60% consists of transformed images. Unfortulately I wasn't able to compare training time to the ones above, because 
+60% consists of transformed images. Unfortunately I wasn't able to compare training time to the ones above, because 
 I couldn't find a free lab computer. Each epoch should be shorter though, as the training set is now of the original size 
 instead of being doubled. Results:
 
@@ -136,7 +136,7 @@ instead of being doubled. Results:
 Conclusions
 
 Regularization plays a very important role in the neural network training. In our case we see that to make the network 
-generalize better we didn't really need more training examles. Just adding some noise to the part of the dataset caused much 
-better accuracy and a major decrease of overfitting. The disparity between the evectiveness of the network on the training 
+generalize better we didn't really need more training examples. Just adding some noise to the part of the dataset caused much 
+better accuracy and a major decrease of overfitting. The disparity between the effectiveness of the network on the training 
 and testing data is not so extreme anymore (although it certainly can be decreased even further). Very nice improvement to 
 the network would be the shortening of training time, something that the current method clearly has trouble with. 
