@@ -1,4 +1,5 @@
 CIFAR10 classification task
+for the Neural Networks course, winter 2015
 Maciej Pawlikowski
 
 Motivation
@@ -58,19 +59,23 @@ I didn’t change the momentum value or the weight decay parameter, after experi
 got worse. Adjusting learning rate proven very helpful though. I got better accuracy by almost tripling the initial 
 value and making it progressively decay after 5000 samples.
 
-The above approach yielded slightly more than 75 percent accuracy on the CIFAR10 test set.
+The above approach yielded slightly more than 75 percent accuracy on the CIFAR10 test set. Given the fact that the 
+network is still relatively small and very few changes were made compared to the starter code, I think this is 
+a nice result.
 
   Total training time: 555 seconds (42 epochs)
   Best result achieved after epoch 27.
   Test set accuracy: 75,64 percent
   Train set accuracy: 99,8 percent
 
+However, the network suffered from enormous amount of overfitting. During the later stages of training process the 
+accuracy on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to 
+properly regularize the network. I made some attempts to regularize it further.
 
-Problems
 
-The network suffered from enormous amount of overfitting. During the later stages of training process the accuracy 
-on the train set was nearly 100 percent. Apparently, simple weight decay technique was not sufficient to properly 
-regularize the network. I made some attempts to regularize it further.
+Improvements
+
+1. Dropout
 
 My first thought was to add dropout. Dropout is a very popular and easy to implement trick for preventing network 
 overfitting. We want to randomly disable some neurons (usually about 50 percent of them) during each training step 
@@ -95,10 +100,11 @@ applying dropout after the first fully-connected layer. Results of the first two
   Best result achieved after 98 epochs.
   Test set accuracy: 77,91 percent
   Train set accuracy: 99,16 percent
-  
 
 While increasing accuracy on the test set, dropout didn't quite solve the overfitting problem. The train set error was 
 still very small.
+
+2. Artificial data
 
 Simple way of decreasing overfitting is to just get more data. More data means that more complex model is necessary 
 to remember all of it. In case of pictures we can easily create artificial data by rotating or shifting existing images. 
